@@ -3,36 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="format-detection" content="telephone=no">
-<meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#0b120d">
 <meta name="description" content="یادگاری اسفندیـار FC — روایت یک روز، نامه‌ای از ته دل و خاطره‌ای که با یک سوت تمام نمی‌شود.">
 <title>اسفندیـار FC — چیزی فراتر از یک نتیجه</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
 /* ════════════════════════════════════════════════════════════
-   تنظیمات پایه و متغیرها (بهینه برای موبایل و دسکتاپ)
+   0 · BASE & TOKENS (پایه و متغیرها)
    ════════════════════════════════════════════════════════════ */
 :root {
   --bg: #0b120d;
+  --bg-light: #121e16;
   --paper: #ece7da;
+  --cream: #f4f0e6;
   --gold: #c9ad78;
-  --gold-2: #e1cca1;
+  --gold-bright: #f3e6c6;
+  --gold-glow: rgba(201, 173, 120, 0.3);
   --ink: #16261c;
+  --text-muted: #9faba0;
   --font: "Vazirmatn", sans-serif;
   --serif: "Cormorant Garamond", serif;
+  --script: "Great Vibes", cursive;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   background: var(--bg);
-  color: #f4f0e6;
+  color: var(--cream);
   font-family: var(--font);
   line-height: 1.9;
   overflow-x: hidden;
@@ -42,424 +46,472 @@ body {
 img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 
+/* اسکرول‌بار لوکس */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #2a3b30; border-radius: 10px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* بافت نویز (Grain) برای حس سینمایی */
+.grain {
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* هاله‌های نورانی پس‌زمینه (Aurora) */
+.aurora {
+  position: fixed; inset: -10%; z-index: 0; pointer-events: none; opacity: 0.6;
+  filter: blur(100px);
+}
+.aurora span {
+  position: absolute; border-radius: 50%; animation: drift 20s ease-in-out infinite alternate;
+}
+.aurora .a1 { width: 600px; height: 600px; background: #2f5a3b; top: -10%; left: -10%; }
+.aurora .a2 { width: 500px; height: 500px; background: #7a6236; bottom: -10%; right: -10%; animation-duration: 25s; }
+@keyframes drift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(5%, 5%) scale(1.1); }
+}
+
 /* سیستم شیشه‌ای (Glassmorphism) */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* انیمیشن‌های ورود (Reveal) */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s var(--ease-out); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ════════════════════════════════════════════════════════════
+   1 · HEADER / NAVBAR
+   ════════════════════════════════════════════════════════════ */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11, 18, 13, 0.6);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.4s ease;
+}
+.nav-container {
+  max-width: 1100px; margin: 0 auto; padding: 15px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.logo {
+  font-family: var(--serif); font-size: 20px; color: var(--gold);
+  letter-spacing: 2px; font-weight: 600;
+}
+.logo span { font-family: var(--font); font-size: 12px; color: var(--text-muted); display: block; letter-spacing: 1px; }
+.nav-links { display: none; gap: 25px; font-size: 13px; color: var(--text-muted); }
+.nav-links a { transition: color 0.3s; }
+.nav-links a:hover { color: var(--gold-bright); }
+
+@media (min-width: 768px) {
+  .nav-links { display: flex; }
 }
 
 /* ════════════════════════════════════════════════════════════
-   هدر (Hero) - استفاده از عکس خام تیم
+   2 · HERO SECTION (سکوی پرتاب)
    ════════════════════════════════════════════════════════════ */
 .hero {
   position: relative;
   min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 100px 20px 60px;
   overflow: hidden;
 }
-
-/* عکس تیم به عنوان پس‌زمینه (بهینه برای موبایل) */
-.hero-img-wrapper {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-bg img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
+  filter: brightness(0.35) contrast(1.2) saturate(0.8);
+  animation: slowZoom 30s ease-in-out infinite alternate;
 }
-.hero-img-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 25%; /* تا صورت‌ها در موبایل دیده شوند */
-  filter: brightness(0.35) saturate(0.8) blur(2px);
-  transform: scale(1.05);
-}
+@keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
 
-/* گرادیان روی عکس برای خوانایی متن */
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(11,18,13,0.4) 0%, rgba(11,18,13,0.85) 60%, var(--bg) 100%);
-  z-index: 1;
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(circle at 50% 40%, transparent 0%, rgba(11,18,13,0.7) 60%, var(--bg) 100%),
+              linear-gradient(180deg, rgba(11,18,13,0.4) 0%, rgba(11,18,13,0.9) 80%, var(--bg) 100%);
 }
 
 .hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 1000px;
+  position: relative; z-index: 2;
+  text-align: center;
+  max-width: 900px;
   width: 100%;
-  text-align: center;
+}
+.hero-tag {
+  font-family: var(--serif); font-size: 12px; letter-spacing: 5px;
+  color: var(--gold); margin-bottom: 25px; display: inline-block;
+  border-bottom: 1px solid rgba(201,173,120,0.4); padding-bottom: 8px;
+}
+.hero-title {
+  font-size: clamp(42px, 10vw, 95px);
+  line-height: 1.1; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 25px;
+}
+.hero-title span {
+  background: linear-gradient(90deg, #bfa06a, #fff, #bfa06a);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 5s linear infinite;
+  text-shadow: 0 0 50px var(--gold-glow);
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+
+.hero-desc {
+  font-size: clamp(14px, 4vw, 18px); color: #c2cdc1;
+  max-width: 650px; margin: 0 auto 50px; font-weight: 300;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.8);
 }
 
-.title h1 {
-  font-size: clamp(36px, 8vw, 80px);
-  line-height: 1.25;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 20px;
+/* کارت نتیجه مسابقه (3D Tilt) */
+.score-card {
+  padding: 35px; max-width: 500px; margin: 0 auto;
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.1s ease, box-shadow 0.3s ease;
 }
-.title h1 span {
-  color: var(--gold-2);
-  text-shadow: 0 0 30px rgba(225, 204, 161, 0.3);
+.score-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: 24px;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none; opacity: 0; transition: opacity 0.3s;
 }
-.title p {
-  font-size: clamp(14px, 4vw, 16px);
-  color: #b7c2b6;
-  max-width: 600px;
-  margin: 0 auto 40px;
-  font-weight: 300;
-}
-
-/* کارت نتیجه مسابقه (مخصوص موبایل) */
-.scorecard {
-  padding: 30px 20px;
-  max-width: 500px;
-  margin: 0 auto;
-}
-.score-top {
-  font-size: 11px;
-  color: #888;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  font-family: var(--serif);
-}
-.score-teams {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 0;
-}
-.score-team h3 { font-size: 16px; font-weight: 700; }
-.score-team span { font-size: clamp(48px, 12vw, 72px); font-weight: 200; display: block; margin-top: 10px; }
-.score-team.win span { color: var(--gold-2); text-shadow: 0 0 30px rgba(225,204,161,0.4); }
-.score-team.lose span { color: rgba(244,240,230,0.4); }
-.divider { width: 1px; height: 60px; background: rgba(255,255,255,0.1); }
-.score-bottom {
-  font-size: 11px;
-  color: #888;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 15px;
-}
+.score-card:hover::after { opacity: 1; }
+.score-header { font-family: var(--serif); font-size: 12px; color: var(--gold); letter-spacing: 3px; margin-bottom: 30px; }
+.score-grid { display: flex; justify-content: space-between; align-items: center; }
+.team h3 { font-size: 20px; font-weight: 800; margin-bottom: 5px; }
+.team p { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; }
+.team .num { font-size: clamp(70px, 18vw, 90px); font-weight: 200; line-height: 1; }
+.team.lose .num { color: rgba(255,255,255,0.3); }
+.team.win .num { color: var(--gold-bright); text-shadow: 0 0 40px var(--gold-glow); }
+.score-divider { width: 1px; height: 90px; background: rgba(255,255,255,0.15); }
 
 /* ════════════════════════════════════════════════════════════
-   بخش‌های عمومی
+   3 · GENERAL SECTIONS
    ════════════════════════════════════════════════════════════ */
-section {
-  padding: 80px 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-size: clamp(24px, 6vw, 36px);
-  color: var(--gold-2);
-  margin-bottom: 40px;
-  text-align: center;
-  font-weight: 800;
-}
-.section-title span {
-  display: block;
-  font-family: var(--serif);
-  font-size: 14px;
-  color: #888;
-  font-weight: 400;
-  letter-spacing: 2px;
-  margin-top: 10px;
-}
+section { padding: 100px 20px; position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; }
+.section-header { text-align: center; margin-bottom: 60px; }
+.section-subtitle { font-family: var(--serif); font-size: 14px; letter-spacing: 4px; color: var(--gold); display: block; margin-bottom: 10px; }
+.section-title { font-size: clamp(30px, 6vw, 48px); font-weight: 900; letter-spacing: -0.02em; }
 
 /* ════════════════════════════════════════════════════════════
-   تشکر ویژه از امین (بخش جدید)
+   4 · AMIN TRIBUTE (تشکر ویژه)
    ════════════════════════════════════════════════════════════ */
+.amin-section {
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-light) 50%, var(--bg) 100%);
+  border-radius: 40px; margin: 0 10px;
+}
 .amin-card {
-  padding: clamp(24px, 5vw, 50px);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  border-color: rgba(201, 173, 120, 0.3);
+  padding: clamp(30px, 8vw, 70px); text-align: center; position: relative; overflow: hidden;
+  border: 1px solid rgba(201, 173, 120, 0.25);
 }
 .amin-card::before {
-  content: "AZH";
-  position: absolute;
-  top: -20px; left: -10px;
-  font-size: 150px;
-  font-family: var(--serif);
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.03);
-  z-index: 0;
+  content: 'AZH'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-family: var(--serif); font-size: 300px; font-style: italic; color: rgba(255,255,255,0.02);
+  pointer-events: none; z-index: 0;
 }
-.amin-card * { position: relative; z-index: 1; }
-.amin-icon {
-  font-size: 40px;
-  margin-bottom: 20px;
-  color: var(--gold);
+.amin-card > * { position: relative; z-index: 1; }
+.crown-icon {
+  width: 70px; height: 70px; margin: 0 auto 25px; color: var(--gold);
+  filter: drop-shadow(0 0 20px var(--gold-glow));
+  animation: float 4s ease-in-out infinite;
 }
-.amin-card h3 {
-  font-size: clamp(20px, 5vw, 28px);
-  color: var(--gold-2);
-  margin-bottom: 15px;
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.amin-title { font-size: clamp(26px, 6vw, 40px); color: var(--gold-bright); margin-bottom: 20px; font-weight: 900; }
+.amin-text {
+  font-size: clamp(15px, 4vw, 19px); line-height: 2.5; color: #d1dcd1;
+  max-width: 800px; margin: 0 auto 25px; text-align: justify; text-align-last: center;
 }
-.amin-card p {
-  font-size: clamp(13px, 4vw, 15px);
-  color: #c2cdc1;
-  line-height: 2.2;
-  max-width: 700px;
-  margin: 0 auto 20px;
-}
-.amin-card strong { color: #fff; }
-
-/* ════════════════════════════════════════════════════════════
-   گالری پوسترها (نمایش کامل در موبایل)
-   ════════════════════════════════════════════════════════════ */
-.gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-.gallery-item {
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.gallery-item img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-.gallery-item:hover img { transform: scale(1.03); }
-
-/* ════════════════════════════════════════════════════════════
-   نامه
-   ════════════════════════════════════════════════════════════ */
-.letter {
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: 24px;
-  padding: clamp(24px, 6vw, 60px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-}
-.letter h2 {
-  font-size: clamp(22px, 5vw, 32px);
-  margin-bottom: 30px;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  padding-bottom: 15px;
-}
-.letter p {
-  font-size: clamp(14px, 4vw, 15px);
-  line-height: 2.4;
-  margin-bottom: 20px;
-  text-align: justify;
-}
-.letter strong { color: #000; font-weight: 700; }
-.signature {
-  margin-top: 40px;
-  font-family: var(--serif);
-  font-size: 24px;
-  color: var(--gold);
-  font-style: italic;
-  text-align: left;
+.amin-text strong { color: var(--cream); background: rgba(201,173,120,0.2); padding: 0 6px; border-radius: 6px; border-bottom: 1px solid var(--gold); }
+.class-badge {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 20px;
+  background: var(--gold); color: var(--bg); padding: 12px 30px;
+  border-radius: 50px; font-weight: 900; font-size: 18px; letter-spacing: 1px;
+  box-shadow: 0 15px 40px var(--gold-glow);
 }
 
 /* ════════════════════════════════════════════════════════════
-   ترکیب تیم (زمین بازی)
+   5 · GALLERY (پوسترها)
    ════════════════════════════════════════════════════════════ */
-.pitch-container {
-  max-width: 400px;
-  margin: 0 auto;
+.gallery-grid { display: flex; flex-direction: column; gap: 40px; }
+.poster-card {
+  position: relative; border-radius: 24px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+  transition: transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out);
 }
+.poster-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 30px var(--gold-glow); }
+.poster-card img { width: 100%; height: auto; object-fit: cover; transition: transform 0.8s var(--ease-out); }
+.poster-card:hover img { transform: scale(1.04); }
+@media (min-width: 768px) { .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; } }
+
+/* ════════════════════════════════════════════════════════════
+   6 · TACTICAL SQUAD (زمین بازی)
+   ════════════════════════════════════════════════════════════ */
+.pitch-wrapper { max-width: 480px; margin: 0 auto; }
 .pitch {
-  aspect-ratio: 2/3;
-  border: 2px solid rgba(255,255,255,0.1);
-  border-radius: 20px;
-  background: repeating-linear-gradient(0deg, transparent 0 10%, rgba(255,255,255,0.02) 10% 20%);
-  position: relative;
-  margin-bottom: 30px;
+  position: relative; aspect-ratio: 2.2/3;
+  background: linear-gradient(180deg, #162a1d 0%, #0d1710 100%);
+  border: 2px solid rgba(255,255,255,0.15); border-radius: 20px;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.9), 0 25px 50px rgba(0,0,0,0.6);
+  overflow: hidden;
 }
-.player {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-.player .circle {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: rgba(201, 173, 120, 0.15);
-  border: 1px solid var(--gold);
+.pitch::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent 0 10%, rgba(255,255,255,0.02) 10% 20%); pointer-events: none; }
+.pitch::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 130px; height: 130px; border: 2px solid rgba(255,255,255,0.08); border-radius: 50%; pointer-events: none; }
+
+.player-node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.3s var(--ease-out); z-index: 2; }
+.player-node:hover { transform: translate(-50%, -50%) scale(1.15); z-index: 10; }
+.player-circle {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: rgba(11,18,13,0.85); border: 2px solid var(--gold);
   display: grid; place-items: center;
-  font-size: 12px; color: var(--gold-2);
-  font-weight: 700;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  font-size: 15px; font-weight: 800; color: var(--gold-bright);
+  box-shadow: 0 0 20px var(--gold-glow); backdrop-filter: blur(5px); transition: all 0.3s ease;
 }
-.player .name { font-size: 11px; font-weight: 600; margin-top: 6px; }
-.player .role { font-size: 9px; color: #888; }
+.player-node:hover .player-circle { background: var(--gold); color: var(--bg); box-shadow: 0 0 40px #fff; }
+.captain .player-circle { background: var(--gold); color: var(--bg); box-shadow: 0 0 30px var(--gold); }
+.captain .player-circle::after { content: 'C'; position: absolute; top: -5px; right: -5px; background: #fff; color: #000; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; }
+.player-name { font-size: 12px; font-weight: 800; margin-top: 10px; text-shadow: 0 2px 6px #000; color: #fff; }
+.player-role { font-size: 10px; color: var(--gold); text-shadow: 0 1px 3px #000; }
 
-.p-gk { left: 50%; top: 88%; }
-.p-def { left: 50%; top: 65%; }
-.p-mid1 { left: 25%; top: 42%; }
-.p-mid2 { left: 75%; top: 42%; }
-.p-fwd { left: 50%; top: 18%; }
+.pos-gk { left: 50%; top: 88%; }
+.pos-def { left: 50%; top: 65%; }
+.pos-mid1 { left: 25%; top: 42%; }
+.pos-mid2 { left: 75%; top: 42%; }
+.pos-fwd { left: 50%; top: 18%; }
 
-.subs-title { font-size: 14px; color: #888; margin-bottom: 15px; text-align: center; }
-.subs { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-.sub { background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+.subs-container { margin-top: 40px; text-align: center; }
+.subs-title { font-size: 14px; color: var(--gold); letter-spacing: 3px; margin-bottom: 20px; font-family: var(--serif); }
+.sub-cards { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+.sub-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); }
 
 /* ════════════════════════════════════════════════════════════
-   فوتر
+   7 · LETTER (نامه کاغذی)
    ════════════════════════════════════════════════════════════ */
-footer {
-  text-align: center;
-  padding: 40px 20px calc(40px + var(--safe-bottom));
-  border-top: 1px solid rgba(255,255,255,0.05);
-  font-size: 12px;
-  color: #666;
+.letter-wrapper { max-width: 850px; margin: 0 auto; }
+.letter {
+  background: var(--paper); color: var(--ink);
+  border-radius: 24px; padding: clamp(30px, 7vw, 70px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.2) inset;
+  position: relative; overflow: hidden;
 }
-footer b { color: var(--gold); font-family: var(--serif); font-size: 16px; display: block; margin-bottom: 10px; letter-spacing: 2px;}
+.letter::before { content: '”'; position: absolute; top: 20px; left: 30px; font-family: var(--serif); font-size: 150px; color: rgba(0,0,0,0.05); line-height: 1; }
+.letter h2 { font-size: clamp(26px, 6vw, 36px); margin-bottom: 30px; color: var(--ink); border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 15px; font-weight: 900; }
+.letter p { font-size: clamp(15px, 4vw, 17px); line-height: 2.5; margin-bottom: 20px; text-align: justify; font-weight: 400; }
+.letter strong { color: #000; font-weight: 800; background: rgba(201,173,120,0.4); padding: 0 6px; border-radius: 4px; }
+.signature-box { margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed rgba(0,0,0,0.2); padding-top: 30px; }
+.signature-text { font-family: var(--script); font-size: 45px; color: #8a6f3f; line-height: 1; transform: rotate(-5deg); text-shadow: 0 1px 0 #fff; }
 
-/* انیمیشن ورود */
-.fade-up {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
+/* ════════════════════════════════════════════════════════════
+   8 · FOOTER
+   ════════════════════════════════════════════════════════════ */
+footer { text-align: center; padding: 60px 20px calc(60px + var(--safe-bottom)); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px; position: relative; z-index: 2; }
+.footer-logo { font-family: var(--serif); font-size: 24px; color: var(--gold); letter-spacing: 5px; margin-bottom: 15px; }
+.footer-text { font-size: 13px; color: var(--text-muted); }
+
+/* ════════════════════════════════════════════════════════════
+   9 · RESPONSIVE & MOBILE OPTIMIZATIONS
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .hero { padding-top: 120px; }
+  .score-card { padding: 25px 20px; }
+  .player-circle { width: 42px; height: 42px; font-size: 13px; }
+  .player-name { font-size: 11px; }
+  .player-role { font-size: 9px; }
+  .letter { padding: 30px 20px; }
+  .signature-box { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .signature-text { font-size: 38px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════ بخش اصلی (Hero) ═══════════ -->
-<header class="hero">
-  <div class="hero-img-wrapper">
-    <img src="team.jpg" alt="تیم اسفندیار اف سی">
-  </div>
-  
-  <div class="hero-content">
-    <div class="title fade-up">
-      <h1>این قصه با<br><span>سوت پایان</span><br>تمام نمی‌شود.</h1>
-      <p>برای اسفندیـار FC؛ برای روزهایی که کنار هم بودیم، برای توپ‌هایی که دنبالشان دویدیم. این صفحه را ساختم تا یادمان بماند: ما فقط یک نتیجه نبودیم.</p>
-    </div>
-    
-    <div class="scorecard glass fade-up" style="transition-delay: 0.2s;">
-      <div class="score-top">THE MATCH ARCHIVE</div>
-      <div class="score-teams">
-        <div class="score-team lose">
-          <h3>اسفندیـار</h3>
-          <span>۰</span>
-        </div>
-        <div class="divider"></div>
-        <div class="score-team win">
-          <h3>گردباد</h3>
-          <span>۱</span>
-        </div>
-      </div>
-      <div class="score-bottom">نتیجه نهایی · یک خاطره مشترک</div>
+<div class="grain"></div>
+<div class="aurora"><span class="a1"></span><span class="a2"></span></div>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<header id="navbar">
+  <div class="nav-container">
+    <div class="logo">ESFANDIAR <span>MEMORY ARCHIVE</span></div>
+    <div class="nav-links">
+      <a href="#story">روایت روز</a>
+      <a href="#amin">تشکر از کاپیتان</a>
+      <a href="#gallery">تصاویر</a>
+      <a href="#squad">ترکیب تیم</a>
+      <a href="#letter">نامه</a>
     </div>
   </div>
 </header>
 
-<!-- ═══════════ تشکر ویژه از امین ═══════════ -->
-<section>
-  <div class="amin-card glass fade-up">
-    <div class="amin-icon">👑</div>
-    <h3>تشکر ویژه از کاپیتان، امین (AZH)</h3>
-    <p>
-      این تیم بدون زحمات امین هرگز شکل نمی‌گرفت. او بود که ما را از یک ایده به یک واقعیت تبدیل کرد. 
-      <strong>گروه را ساخت، تمرین‌ها را برگزار کرد، با تمام وجود در ارتباط بود و پول‌ها را برای مسابقات جمع کرد.</strong> 
-      او لیست را نوشت، ترکیب را با تمام ذوقش چید و همیشه برای برد تیم می‌سوخت.
+<!-- ═══════════ HERO SECTION ═══════════ -->
+<header class="hero">
+  <div class="hero-bg">
+    <img src="team.jpg" alt="تیم اسفندیار اف سی">
+  </div>
+  <div class="hero-overlay"></div>
+  
+  <div class="hero-content">
+    <div class="hero-tag reveal">A MEMORY WE KEEP · 1405</div>
+    <h1 class="hero-title reveal" style="transition-delay: 0.1s;">
+      این قصه با<br><span>سوت پایان</span><br>تمام نمی‌شود.
+    </h1>
+    <p class="hero-desc reveal" style="transition-delay: 0.2s;">
+      برای اسفندیـار FC؛ برای روزهایی که کنار هم بودیم، برای توپ‌هایی که دنبالشان دویدیم. این صفحه را ساختم تا یادمان بماند: ما فقط یک نتیجه نبودیم.
     </p>
-    <p>
-      امین فقط یک بازیکن نبود؛ او یک لیدر واقعی بود که می‌خواست <strong>کلاس ۸/۳</strong> ما دیده شود و به همه ثابت کند ما یک تیم واقعی هستیم. 
+    
+    <div class="score-card glass reveal" id="tiltCard" style="transition-delay: 0.3s;">
+      <div class="score-header">THE MATCH ARCHIVE</div>
+      <div class="score-grid">
+        <div class="team lose">
+          <h3>اسفندیـار</h3>
+          <p>تیم ما</p>
+          <div class="num">۰</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="team win">
+          <h3>گردباد</h3>
+          <p>حریف</p>
+          <div class="num">۱</div>
+        </div>
+      </div>
+      <div class="score-header" style="margin-top: 25px; margin-bottom: 0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+        نتیجه نهایی · یک خاطره مشترک
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ AMIN TRIBUTE ═══════════ -->
+<section class="amin-section" id="amin">
+  <div class="section-header reveal">
+    <span class="section-subtitle">THE CAPTAIN · LEADER</span>
+    <h2 class="section-title">تشکر ویژه از کاپیتان</h2>
+  </div>
+  
+  <div class="amin-card glass reveal" style="transition-delay: 0.2s;">
+    <svg class="crown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-5h18V6H3v2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3 6 5 1-4 4 1 5-5-3-5 3 1-5-4-4 5-1z"></path></svg>
+    <h3 class="amin-title">امین (AZH)؛ مغز متفکر تیم</h3>
+    <p class="amin-text">
+      این تیم بدون زحمات امین هرگز شکل نمی‌گرفت. او بود که ما را از یک ایده به یک واقعیت تبدیل کرد. 
+      <strong>گروه را ساخت</strong>، <strong>تمرین‌ها را برگزار کرد</strong>، با تمام وجود در ارتباط بود و <strong>پول‌ها را برای مسابقات جمع کرد</strong>. 
+      او <strong>لیست را نوشت</strong>، <strong>ترکیب را با تمام ذوقش چید</strong> و همیشه برای برد تیم می‌سوخت.
+    </p>
+    <p class="amin-text">
+      امین فقط یک بازیکن نبود؛ او یک لیدر واقعی بود که می‌خواست کلاس ما دیده شود و به همه ثابت کند ما یک تیم واقعی هستیم. 
       از صمیم قلب، ممنون برای همه زحماتت که هیچ‌وقت فراموش نمی‌شود. ❤️
     </p>
-  </div>
-</section>
-
-<!-- ═══════════ گالری پوسترها ═══════════ -->
-<section>
-  <h2 class="section-title fade-up">آرشیو خاطرات<span>THE MEMORY ARCHIVE</span></h2>
-  <div class="gallery fade-up">
-    <div class="gallery-item">
-      <img src="poster.jpg" alt="پوستر یادگاری ۱">
-    </div>
-    <div class="gallery-item">
-      <img src="poster2.jpg" alt="پوستر یادگاری ۲">
+    <div class="class-badge">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+      کلاس ۸/۳
     </div>
   </div>
 </section>
 
-<!-- ═══════════ ترکیب تیم ═══════════ -->
-<section>
-  <h2 class="section-title fade-up">ترکیب یک خاطره<span>THE SQUAD</span></h2>
+<!-- ═══════════ GALLERY ═══════════ -->
+<section id="gallery">
+  <div class="section-header reveal">
+    <span class="section-subtitle">THE MEMORY ARCHIVE</span>
+    <h2 class="section-title">تصاویر یادگاری</h2>
+  </div>
   
-  <div class="pitch-container fade-up">
-    <div class="pitch glass" style="background: transparent;">
-      <div class="player p-gk">
-        <div class="circle">۱</div>
-        <div class="name">سرگزی</div>
-        <div class="role">دروازه‌بان</div>
-      </div>
-      <div class="player p-def">
-        <div class="circle">۴</div>
-        <div class="name">امیرحسین شرکائی</div>
-        <div class="role">مدافع</div>
-      </div>
-      <div class="player p-mid1">
-        <div class="circle">۸</div>
-        <div class="name">سعادت</div>
-        <div class="role">هافبک</div>
-      </div>
-      <div class="player p-mid2">
-        <div class="circle">۶</div>
-        <div class="name">برسام</div>
-        <div class="role">هافبک</div>
-      </div>
-      <div class="player p-fwd">
-        <div class="circle">۹</div>
-        <div class="name">امین (AZH)</div>
-        <div class="role">مهاجم · کاپیتان</div>
-      </div>
+  <div class="gallery-grid">
+    <div class="poster-card reveal" style="transition-delay: 0.1s;">
+      <img src="poster.jpg" alt="پوستر یادگاری ۱" loading="lazy">
     </div>
-
-    <div class="subs-title">اعضای ذخیره</div>
-    <div class="subs">
-      <div class="sub">امیرنژاد (مدافع)</div>
-      <div class="sub">اهورا محمودی</div>
+    <div class="poster-card reveal" style="transition-delay: 0.2s;">
+      <img src="poster2.jpg" alt="پوستر یادگاری ۲" loading="lazy">
     </div>
   </div>
 </section>
 
-<!-- ═══════════ نامه امیرحسین ═══════════ -->
-<section>
-  <div class="letter fade-up">
-    <h2>چند کلمه از ته دل</h2>
-    <p>به همه اعضای اسفندیـار FC؛</p>
-    <p>می‌خواهم از صمیم قلب از تک‌تک شما عذرخواهی کنم. اگر در این مسیر، در تمرین‌ها یا در مسابقه، جایی کوتاهی کردم؛ اگر تصمیمی گرفتم که می‌توانست بهتر باشد؛ اگر در لحظه‌ای آن‌طور که باید به تیم کمک نکردم؛ یا اگر حرف و رفتارم باعث ناراحتی کسی شد، واقعاً متأسفم.</p>
-    <p>می‌دانم این نتیجه فقط به یک نفر مربوط نبود. فوتبال بازی یک نفر نیست و شکست هم گردن یک نفر نمی‌افتد. همه ما سهمی از اتفاق‌های زمین داشتیم؛ بعضی لحظه‌ها خوب پیش رفتند و بعضی لحظه‌ها نه. نمی‌خواهم بعد از این مسابقه کسی خودش را سرزنش کند یا کسی را مقصر بداند. ما یک تیم بودیم و این نتیجه هم بخشی از تجربه مشترک ماست.</p>
-    <p>از همه‌تان ممنونم؛ بابت وقتی که گذاشتید، تلاشی که کردید، همراهی‌تان و تمام لحظه‌هایی که کنار هم گذراندیم. من هم از حذف‌شدن ناراحتم؛ اما دلم نمی‌خواهد آخرین چیزی که از این تیم در ذهنمان می‌ماند، ناراحتی یا دلخوری باشد.</p>
-    <p><strong>برای من، اسفندیـار FC فقط نام یک تیم روی یک برگه مسابقه نبود؛ مجموعه‌ای از روزها، آدم‌ها و خاطره‌هایی بود که کنار هم ساختیم.</strong></p>
-    <div class="signature">Amirhossein</div>
+<!-- ═══════════ TACTICAL SQUAD ═══════════ -->
+<section id="squad">
+  <div class="section-header reveal">
+    <span class="section-subtitle">THE SQUAD · 1405</span>
+    <h2 class="section-title">ترکیب یک خاطره</h2>
+  </div>
+
+  <div class="pitch-wrapper reveal" style="transition-delay: 0.1s;">
+    <div class="pitch">
+      <div class="player-node pos-gk">
+        <div class="player-circle">۱</div>
+        <div class="player-name">سرگزی</div>
+        <div class="player-role">دروازه‌بان</div>
+      </div>
+      <div class="player-node pos-def">
+        <div class="player-circle">۴</div>
+        <div class="player-name">امیرحسین شرکائی</div>
+        <div class="player-role">مدافع</div>
+      </div>
+      <div class="player-node pos-mid1">
+        <div class="player-circle">۸</div>
+        <div class="player-name">سعادت</div>
+        <div class="player-role">هافبک</div>
+      </div>
+      <div class="player-node pos-mid2">
+        <div class="player-circle">۶</div>
+        <div class="player-name">برسام</div>
+        <div class="player-role">هافبک</div>
+      </div>
+      <div class="player-node pos-fwd captain">
+        <div class="player-circle">۹</div>
+        <div class="player-name">امین (AZH)</div>
+        <div class="player-role">مهاجم · کاپیتان</div>
+      </div>
+    </div>
+
+    <div class="subs-container">
+      <div class="subs-title">اعضای ذخیره</div>
+      <div class="sub-cards">
+        <div class="sub-card">امیرنژاد (مدافع)</div>
+        <div class="sub-card">اهورا محمودی</div>
+      </div>
+    </div>
   </div>
 </section>
 
+<!-- ═══════════ LETTER ═══════════ -->
+<section id="letter">
+  <div class="section-header reveal">
+    <span class="section-subtitle">A LETTER FROM AMIRHOSSEIN</span>
+    <h2 class="section-title">چند کلمه از ته دل</h2>
+  </div>
+
+  <div class="letter-wrapper reveal" style="transition-delay: 0.1s;">
+    <div class="letter">
+      <h2>برای همه بچه‌های تیم</h2>
+      <p>به همه اعضای اسفندیـار FC؛</p>
+      <p>می‌خواهم از صمیم قلب از تک‌تک شما عذرخواهی کنم. اگر در این مسیر، در تمرین‌ها یا در مسابقه، جایی کوتاهی کردم؛ اگر تصمیمی گرفتم که می‌توانست بهتر باشد؛ اگر در لحظه‌ای آن‌طور که باید به تیم کمک نکردم؛ یا اگر حرف و رفتارم باعث ناراحتی کسی شد، واقعاً متأسفم.</p>
+      <p>می‌دانم این نتیجه فقط به یک نفر مربوط نبود. فوتبال بازی یک نفر نیست و شکست هم گردن یک نفر نمی‌افتد. همه ما سهمی از اتفاق‌های زمین داشتیم؛ بعضی لحظه‌ها خوب پیش رفتند و بعضی لحظه‌ها نه. نمی‌خواهم بعد از این مسابقه کسی خودش را سرزنش کند یا کسی را مقصر بداند. ما یک تیم بودیم و این نتیجه هم بخشی از تجربه مشترک ماست.</p>
+      <p>از همه‌تان ممنونم؛ بابت وقتی که گذاشتید، تلاشی که کردید، همراهی‌تان و تمام لحظه‌هایی که کنار هم گذراندیم. متأسفم که نتوانستیم این مسیر را با نتیجه‌ای که دوست داشتیم به پایان برسانیم. من هم از حذف‌شدن ناراحتم؛ اما دلم نمی‌خواهد آخرین چیزی که از این تیم در ذهنمان می‌ماند، ناراحتی یا دلخوری از همدیگر باشد.</p>
+      <p><strong>برای من، اسفندیـار FC فقط نام یک تیم روی یک برگه مسابقه نبود؛ مجموعه‌ای از روزها، آدم‌ها و خاطره‌هایی بود که کنار هم ساختیم.</strong> امیدوارم هرکداممان هر وقت به این مسابقه فکر کردیم، فقط نتیجه را به یاد نیاوریم؛ یادمان بیاید که بخشی از یک تیم بودیم.</p>
+      <p>باز هم از همه شما عذر می‌خواهم و برای تک‌تک‌تان احترام قائلم. ممنونم که در این مسیر کنار هم بودیم.</p>
+      
+      <div class="signature-box">
+        <div>
+          <div style="font-weight: 900; font-size: 18px;">با احترام و رفاقت، امیرحسین شرکائی</div>
+          <div style="font-size: 13px; color: #666; margin-top: 5px;">از طرف خودم، برای تمام اعضای اسفندیـار FC</div>
+        </div>
+        <div class="signature-text">Amirhossein</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  <b>ESFANDIAR FC</b>
-  <span>با احترام، برای تمام اعضای تیم · ۱۴۰۵</span>
+  <div class="footer-logo">ESFANDIAR FC</div>
+  <div class="footer-text">با احترام، برای همه اعضای تیم · ۱۴۰۵</div>
 </footer>
 
 <script>
-  // انیمیشن ظاهر شدن نرم هنگام اسکرول
+  // ════════════════════════════════════════════════════════════
+  // 1. Reveal Animations on Scroll (Intersection Observer)
+  // ════════════════════════════════════════════════════════════
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -467,9 +519,60 @@ footer b { color: var(--gold); font-family: var(--serif); font-size: 16px; displ
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ════════════════════════════════════════════════════════════
+  // 2. 3D Tilt Effect for Scorecard
+  // ════════════════════════════════════════════════════════════
+  const card = document.getElementById('tiltCard');
+  
+  if (card) {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = ((y - centerY) / centerY) * -12;
+      const rotateY = ((x - centerX) / centerX) * 12;
+      
+      card.style.setProperty('--rx', `${rotateX}deg`);
+      card.style.setProperty('--ry', `${rotateY}deg`);
+      card.style.setProperty('--gx', `${(x / rect.width) * 100}%`);
+      card.style.setProperty('--gy', `${(y / rect.height) * 100}%`);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--rx', '0deg');
+      card.style.setProperty('--ry', '0deg');
+    });
+
+    // برای موبایل (Touch)
+    card.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      const rect = card.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = ((y - centerY) / centerY) * -12;
+      const rotateY = ((x - centerX) / centerX) * 12;
+      
+      card.style.setProperty('--rx', `${rotateX}deg`);
+      card.style.setProperty('--ry', `${rotateY}deg`);
+      card.style.setProperty('--gx', `${(x / rect.width) * 100}%`);
+      card.style.setProperty('--gy', `${(y / rect.height) * 100}%`);
+      
+      setTimeout(() => {
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      }, 500);
+    }, { passive: true });
+  }
 </script>
 </body>
 </html>
